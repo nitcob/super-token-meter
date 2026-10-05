@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "super-token-meter"
+version = "0.1.0"
+description = "Local-first, private dashboard for AI coding-agent token usage & cost. No API key, no cloud."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Nicholas Bradford" }]
+keywords = ["claude", "claude-code", "llm", "tokens", "cost", "dashboard", "local-first", "privacy"]
+dependencies = []  # standard library only
+
+[project.urls]
+Homepage = "https://github.com/nitcob/super-token-meter"
+Issues = "https://github.com/nitcob/super-token-meter/issues"
+
+[project.scripts]
+super-token-meter = "super_token_meter.__main__:main"
+
+[tool.setuptools]
+packages = ["super_token_meter"]
+
+[tool.setuptools.package-data]
+super_token_meter = ["pricing.json", "dashboard/*.html"]

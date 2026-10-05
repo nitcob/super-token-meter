@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS: refresh Super Token Meter data every 15 min. Placeholders are filled by scripts/install.
+     NOTE: keep the repo OUTSIDE ~/Desktop/~/Documents/~/Downloads — macOS TCC blocks launchd there. -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.supertokenmeter.collect</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__PYTHON__</string>
+    <string>-m</string>
+    <string>super_token_meter</string>
+    <string>collect</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>__REPO__</string>
+  <key>StartInterval</key>
+  <integer>900</integer>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>__DATA__/collect.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>__DATA__/collect.err.log</string>
+</dict>
+</plist>

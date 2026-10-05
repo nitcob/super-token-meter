@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# scripts/install -- Super Token Meter: set up the per-user data dir and a 15-min
+#                    collector schedule (launchd on macOS, user systemd on Linux).
+#                    Local-first: installs nothing system-wide, needs no sudo, no API key.
+set -euo pipefail
+IFS=$'\n\t'
+
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+PY="$(command -v python3 || true)"
+[ -n "$PY" ] || { echo "python3 not found — please install Python 3.9+"; exit 1; }
+DATA="${STM_DATA_DIR:-$HOME/.super-token-meter/data}"
+mkdir -p "$DATA"
+log(){ printf '[install] %s\n' "$*"; }
+
+log "repo:   $REPO"
+log "python: $PY"
+log "data:   $DATA"
+
+case "$(uname -s)" in
+  Darwin)
+    PLIST="$HOME/Library/LaunchAgents/com.supertokenmeter.collect.plist"
+    sed -e "s#__PYTHON__#$PY#g" -e "s#__REPO__#$REPO#g" -e "s#__DATA__#$DATA#g" \
+        "$REPO/deploy/launchd.plist.template" > "$PLIST"
+    launchctl unload "$PLIST" 2>/dev/null || true
+    launchctl load -w "$PLIST"
+    log "launchd agent loaded ($PLIST) — collects every 15 min."
+    if echo "$REPO" | grep -qiE "/(Desktop|Documents|Downloads)(/|$)"; then
+      log "WARNING: macOS TCC blocks launchd under Desktop/Documents/Downloads — move the repo elsewhere."
+    fi
+    ;;
+  Linux)
+    UD="$HOME/.config/systemd/user"; mkdir -p "$UD"
+    cat > "$UD/super-token-meter.service" <<EOF
+[Unit]
+Description=Super Token Meter collector
+[Service]
+Type=oneshot
+WorkingDirectory=$REPO
+ExecStart=$PY -m super_token_meter collect
+EOF
+    cat > "$UD/super-token-meter.timer" <<EOF
+[Unit]
+Description=Run Super Token Meter collector every 15 minutes
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+Persistent=true
+[Install]
+WantedBy=timers.target
+EOF
+    if command -v systemctl >/dev/null 2>&1; then
+      systemctl --user daemon-reload
+      systemctl --user enable --now super-token-meter.timer
+      log "user systemd timer enabled — collects every 15 min."
+    else
+      log "systemd not found — add a cron job: */15 * * * * cd $REPO && $PY -m super_token_meter collect"
+    fi
+    ;;
+  *)
+    log "Unsupported OS for auto-schedule. On Windows use Task Scheduler to run:"
+    log "  $PY -m super_token_meter collect   (every 15 min, in $REPO)"
+    ;;
+esac
+
+"$PY" -m super_token_meter collect || true
+log "Done. View the dashboard any time with:  python3 -m super_token_meter serve"

@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Byte-compile (no syntax errors)
+        run: python -m compileall -q super_token_meter scripts tests
+      - name: Tests (stdlib only, no deps)
+        run: python tests/test_collector.py
+      - name: JSON sanity (pricing + example data valid)
+        run: |
+          python -c "import json; json.load(open('super_token_meter/pricing.json')); print('pricing ok')"
+          python -c "import json; json.load(open('examples/claude_usage.json')); json.load(open('examples/local_usage.json')); print('examples ok')"
+
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,30 @@
+# Runtime data — NEVER commit real usage data
+data/
+*.cc_state.json
+usage.jsonl
+claude_usage.json
+local_usage.json
+# ...but DO ship the synthetic demo data under examples/
+!examples/claude_usage.json
+!examples/local_usage.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# secrets — should never exist here, but belt-and-suspenders
+*.env
+.env
+*token*.txt
+*secret*
