@@ -1,0 +1,12 @@
+.git
+.github
+tests
+docs
+deploy
+scripts
+*.md
+data
+.super-token-meter
+__pycache__
+*.pyc
+*.pyo

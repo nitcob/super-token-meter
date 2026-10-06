@@ -1,0 +1,23 @@
+# Optional: run Super Token Meter in Docker.
+#
+#   docker compose up --build        # then open http://127.0.0.1:8722
+#
+# Privacy is preserved: the dashboard binds 0.0.0.0 only *inside* the container, and the port is
+# mapped to 127.0.0.1 on the host — so it is reachable only from this machine, never the network.
+#
+# `serve` collects once at container start. To refresh without a restart:
+#   docker compose exec super-token-meter python -m super_token_meter collect
+services:
+  super-token-meter:
+    build: .
+    ports:
+      - "127.0.0.1:8722:8722" # localhost-only on the host
+    volumes:
+      - "${HOME}/.claude:/root/.claude:ro" # your Claude Code logs, read-only
+      - "stm-data:/data" # persisted collected data
+    environment:
+      - STM_DATA_DIR=/data
+    restart: unless-stopped
+
+volumes:
+  stm-data:
