@@ -60,6 +60,34 @@ by‑model / by‑project, costliest sessions, references) · bundled offline pr
 multipliers · `demo` mode · cross‑platform scheduled collection (launchd / systemd / Task
 Scheduler) · raw JSON served at `/data/`.
 
+## Hardening backlog (from the v0.1 engineering review)
+
+A principal‑level review scored v0.1 at **~72/100** — a clean, well‑CI'd foundation that is not yet
+production‑hardened. These are the specific items to reach **~90+ ("I'd trust this in production")**,
+ordered by points‑per‑effort. Several overlap the feature milestones below.
+
+1. **Test depth → ~80% coverage (biggest win, +8–10).** Only `collector` is unit‑tested today;
+   `proxy`, `aggregate`, `server`, and CLI routing have no in‑repo tests, and the ~630‑line dashboard
+   JS (benchmark math, what‑if, period bucketing) is untested. Commit the proxy fake‑upstream harness,
+   add `test_aggregate`/`test_server`, extract the dashboard math into a testable unit, and add a
+   coverage gate in CI.
+2. **Governance + supply‑chain pack (+4).** `dependabot.yml` (pip + actions), **pin GitHub Actions to
+   SHAs** (not moving tags), `release.yml` (auto GitHub Release on tag), `CODEOWNERS`, `py.typed`,
+   `.editorconfig`, `CODE_OF_CONDUCT.md`.
+3. **Real type hints (+3).** Annotate public functions and the usage doc (`TypedDict`); take `mypy`
+   off lenient once clean — today it passes trivially because nothing is annotated.
+4. **Prove distribution (+2).** Publish to PyPI; add a CI step that installs the wheel and runs
+   `super-token-meter --version`; document `pipx` / `uv tool` install. (See v1.0.)
+5. **Docs polish (+2).** A dashboard screenshot/GIF in the README, an `ARCHITECTURE.md`, and a
+   documented JSON schema for `/data/` (also unblocks the MCP).
+6. **Robustness nits (+2).** Log swallowed exceptions (don't `except: pass` silently); verify the
+   daily **date basis** is consistent between the cloud collector and the local aggregator; note
+   state‑file concurrency.
+7. **Python floor bump 3.9 → 3.11/3.12.** Verified 2026‑10‑06 via
+   [endoflife.date/python](https://endoflife.date/python): **3.9 EOL'd 31 Oct 2025 and 3.10 on
+   1 Oct 2026** — the current `3.9 + 3.12` matrix runs an EOL version. 3.11 is supported to Oct 2027,
+   3.12 to Oct 2028.
+
 ## v0.2 — cheap gap‑closers (mostly UI over data we already collect)
 
 ### 1. Reasoning‑ratio metric + per‑session Run view
