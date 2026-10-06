@@ -17,6 +17,41 @@ Items are ordered by **value per effort** against the current stdlib‑only arch
 - **Honest numbers.** Equivalent cost is a notional list‑price yardstick, not a bill. Benchmarks are
   either grounded + cited or clearly labeled heuristics.
 
+## Stack & tooling
+
+"Are we modernizing the stack?" — **the runtime is deliberately _not_ modernized, and that is the
+product.** Stdlib‑only, no framework, no build, no DB is what makes this auditable, zero‑install,
+offline, cross‑platform, and private. Modernization happens in the **dev** and **distribution**
+layers, which never touch the zero‑dependency runtime.
+
+**Locked (do not change — this is the moat):**
+
+- **Runtime:** Python standard library only (`dependencies = []`); `http.server` for serving.
+- **Frontend:** one self‑contained static `index.html` — vanilla JS + inline SVG, **no framework,
+  no bundler, no CDN**.
+- **Data:** plain JSON files on disk — **no database**.
+
+**Now (landed):**
+
+- **`ruff`** (lint: pyflakes + import order) and **`mypy`** (lenient type‑check) run in CI as a
+  dedicated `lint` job. They are **dev‑only** (`pip install -e ".[dev]"`); the shipped runtime stays
+  zero‑dependency. Ruleset starts high‑signal/low‑noise and tightens over time.
+
+**Planned (dev + distribution only):**
+
+- **Distribution** (the real user‑facing modernization; tracked in v1.0): publish to **PyPI** →
+  `pipx install` / `uv tool install`, plus a **Docker** image. Replaces "git clone + run a script".
+- **Dev tooling:** tighten the `ruff` ruleset (add `E` / `UP` / `B`, then adopt `ruff format`); add
+  coverage. Keep all of it dev‑only.
+- **Python floor:** `requires-python = ">=3.9"`, but **3.9 reached end‑of‑life in Oct 2025** and modern
+  tooling already drops it (e.g. `mypy` refuses `--python-version 3.9`). Plan a conscious bump to
+  **3.11** (keeps broad reach, unlocks modern typing + speed) — a decision to make, not drift.
+- **Frontend scaling rule:** as pages grow (v0.2+), **do not** adopt a SPA framework or bundler. If
+  one HTML file stops being enough, split into a few **static files served as‑is** (still no build
+  step), not React/Vite.
+- **Data contract:** publish a documented **JSON schema** for the data files — helps the future MCP
+  server and anyone scripting against `/data/`.
+
 ## Shipped — v0.1
 
 Claude Code + local‑LLM collection · dashboard (Overview, Efficiency with grounded benchmarks,

@@ -12,6 +12,17 @@ python3 tests/test_collector.py          # run tests (no pytest needed)
 python3 scripts/make_examples.py         # regenerate synthetic sample data
 ```
 
+Lint + type‑check (dev‑only tools — they never ship in the runtime):
+
+```bash
+pip install -e ".[dev]"                   # installs ruff + mypy (runtime stays zero‑dep)
+ruff check super_token_meter tests scripts
+mypy
+```
+
+CI runs these in a `lint` job. See **Stack & tooling** in [`ROADMAP.md`](ROADMAP.md) for what the
+ruleset covers today and where it's headed.
+
 ## Ground rules
 
 - **No new runtime dependencies** without discussion — stdlib only is a feature.
