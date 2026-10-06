@@ -19,6 +19,7 @@ import argparse
 import glob
 import json
 import os
+import socket
 import sys
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -357,7 +358,7 @@ def main():
     doc = {
         "source": "claude_code",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "host": os.uname().nodename,
+        "host": socket.gethostname(),  # cross-platform (os.uname() is Unix-only -> crashes on Windows)
         "pricing": {"models": PRICING, "cache_multipliers": CACHE_MULT, "default": DEFAULT_RATE,
                     "verified_date": PRICING_VERIFIED,
                     "note": "USD per 1e6 tokens; cost is EQUIVALENT API cost (Claude Code is subscription-flat)."},

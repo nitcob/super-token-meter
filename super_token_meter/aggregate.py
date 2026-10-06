@@ -17,6 +17,7 @@ Notes   : stdlib only. Idempotent -- re-reads the whole (small) log each run. If
 import argparse
 import json
 import os
+import socket
 import sys
 import time
 from collections import defaultdict
@@ -75,7 +76,7 @@ def aggregate(log_path, output_path):
     doc = {
         "source": "local",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "host": os.uname().nodename,
+        "host": socket.gethostname(),  # cross-platform (os.uname() is Unix-only -> crashes on Windows)
         "totals": totals,
         "by_model": dict(by_model),
         "by_project": {"local": dict(totals)},
