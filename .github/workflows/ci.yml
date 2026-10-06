@@ -6,10 +6,19 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: test (${{ matrix.os }} · py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash          # consistent across Linux/macOS/Windows (Git Bash)
     strategy:
+      fail-fast: false
       matrix:
-        python: ["3.9", "3.12"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.12"]
+        include:
+          - os: ubuntu-latest
+            python: "3.9"    # also test the minimum supported Python
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,6 +32,14 @@ jobs:
         run: |
           python -c "import json; json.load(open('super_token_meter/pricing.json')); print('pricing ok')"
           python -c "import json; json.load(open('examples/claude_usage.json')); json.load(open('examples/local_usage.json')); print('examples ok')"
+      - name: Windows installer parses (PowerShell syntax)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $errs = $null
+          [System.Management.Automation.PSParser]::Tokenize((Get-Content scripts/install.ps1 -Raw), [ref]$errs) | Out-Null
+          if ($errs -and $errs.Count -gt 0) { $errs | ForEach-Object { Write-Error $_.Message }; exit 1 }
+          Write-Host "scripts/install.ps1 parses OK"
 
   secrets-scan:
     runs-on: ubuntu-latest
