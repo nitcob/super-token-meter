@@ -57,8 +57,8 @@ EOF
     fi
     ;;
   *)
-    log "Unsupported OS for auto-schedule. On Windows use Task Scheduler to run:"
-    log "  $PY -m super_token_meter collect   (every 15 min, in $REPO)"
+    log "No native scheduler for this OS. On Windows, run in PowerShell:"
+    log "  powershell -ExecutionPolicy Bypass -File scripts/install.ps1   (registers a 15-min task)"
     ;;
 esac
 

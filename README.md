@@ -24,7 +24,7 @@ python3 -m super_token_meter demo
 python3 -m super_token_meter serve
 ```
 
-That opens the dashboard at **http://127.0.0.1:8722** (localhost‑only). To keep it fresh, run `collect` on a schedule (see [deploy/](deploy/)).
+That opens the dashboard at **http://127.0.0.1:8722** (localhost‑only). To keep it fresh, run `collect` on a schedule (see [deploy/](deploy/) — macOS launchd · Linux systemd · Windows Task Scheduler).
 
 ```
 super-token-meter serve      # collect + open the dashboard
