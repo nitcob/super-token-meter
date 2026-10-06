@@ -56,6 +56,23 @@ jobs:
       - name: mypy (type-check — lenient)
         run: mypy
 
+  docker:
+    name: docker build + smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t stm:ci .
+      - name: Smoke test (serve demo data in-container, curl from host)
+        run: |
+          docker run -d --name stm -p 127.0.0.1:8722:8722 -v "$PWD/examples:/seed:ro" stm:ci \
+            sh -c "mkdir -p /data && cp /seed/*.json /data/ && python -m super_token_meter serve --no-collect --host 0.0.0.0 --port 8722 --no-browser"
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8722/ >/dev/null && break; sleep 1; done
+          curl -sf http://127.0.0.1:8722/ | grep -q "Super Token Meter"
+          curl -sf http://127.0.0.1:8722/data/claude_usage.json >/dev/null
+          echo "docker smoke OK"
+          docker rm -f stm
+
   secrets-scan:
     runs-on: ubuntu-latest
     permissions:
