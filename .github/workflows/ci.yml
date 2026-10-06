@@ -41,6 +41,21 @@ jobs:
           if ($errs -and $errs.Count -gt 0) { $errs | ForEach-Object { Write-Error $_.Message }; exit 1 }
           Write-Host "scripts/install.ps1 parses OK"
 
+  lint:
+    name: lint (ruff + mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dev tools (runtime stays zero-dep; these are dev-only)
+        run: pip install -e ".[dev]"
+      - name: ruff (lint — real bugs + import order)
+        run: ruff check super_token_meter tests scripts
+      - name: mypy (type-check — lenient)
+        run: mypy
+
   secrets-scan:
     runs-on: ubuntu-latest
     permissions:

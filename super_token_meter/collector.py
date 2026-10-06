@@ -65,6 +65,7 @@ SKIP_MODELS = {"<synthetic>", "", None}
 LOG_PREFIX = "[cc-collect]"
 
 import re
+
 _DATE_SUFFIX = re.compile(r"-\d{6,8}$")
 
 

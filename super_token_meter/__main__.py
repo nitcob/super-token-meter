@@ -14,8 +14,7 @@ import os
 import shutil
 import sys
 
-from . import __version__
-from . import collector, server
+from . import __version__, collector, server
 
 _DEFAULT_DATA = os.environ.get("STM_DATA_DIR", os.path.expanduser("~/.super-token-meter/data"))
 _HERE = os.path.dirname(os.path.abspath(__file__))

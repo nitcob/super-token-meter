@@ -13,6 +13,11 @@ authors = [{ name = "Nicholas Bradford" }]
 keywords = ["claude", "claude-code", "llm", "tokens", "cost", "dashboard", "local-first", "privacy"]
 dependencies = []  # standard library only
 
+[project.optional-dependencies]
+# DEV-ONLY tools. The runtime stays zero-dependency (`dependencies = []` above);
+# these are never imported at runtime and never shipped to users.
+dev = ["ruff>=0.6", "mypy>=1.8"]
+
 [project.urls]
 Homepage = "https://github.com/nitcob/super-token-meter"
 Issues = "https://github.com/nitcob/super-token-meter/issues"
@@ -25,3 +30,20 @@ packages = ["super_token_meter"]
 
 [tool.setuptools.package-data]
 super_token_meter = ["pricing.json", "dashboard/*.html"]
+
+[tool.ruff]
+# High-signal, low-noise baseline: real bugs (pyflakes F) + import order (isort I).
+# Intentionally NOT enforcing stylistic rules (E) or `ruff format` yet — the code is
+# deliberately dense and uses broad try/except for graceful degradation. The ruleset
+# tightens over time; see "Stack & tooling" in ROADMAP.md.
+line-length = 120
+
+[tool.ruff.lint]
+select = ["F", "I"]
+
+[tool.mypy]
+# Lenient first pass: no annotations required, just catch real type errors.
+# mypy >= 2.4 dropped `--python-version 3.9`, so the target is the runner's interpreter;
+# actual 3.9 syntax compatibility is covered by the compileall matrix in CI.
+files = ["super_token_meter"]
+ignore_missing_imports = true
