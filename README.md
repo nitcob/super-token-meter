@@ -1,5 +1,10 @@
 # Super Token Meter
 
+[![CI](https://github.com/nitcob/super-token-meter/actions/workflows/ci.yml/badge.svg)](https://github.com/nitcob/super-token-meter/actions/workflows/ci.yml)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Deps: stdlib only](https://img.shields.io/badge/deps-stdlib%20only-blue.svg)
+![Local-first](https://img.shields.io/badge/local--first-no%20API%20key-brightgreen.svg)
+
 **Local‑first, private dashboard for AI coding‑agent token usage & cost.** See how many tokens you burn in **Claude Code** (and your **local LLMs**), what it would cost at API rates, how efficient you are against **grounded benchmarks**, and how much of your AI stays **on your own machine**.
 
 > **No API key. No account. No cloud. Nothing leaves your machine.** It reads the session logs your agent already writes to disk. Python standard library only — zero dependencies.
