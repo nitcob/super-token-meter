@@ -24,7 +24,8 @@ Description=Super Token Meter collector
 [Service]
 Type=oneshot
 WorkingDirectory=/path/to/super-token-meter
-ExecStart=/usr/bin/python3 -m super_token_meter collect
+# pass --data-dir explicitly: a systemd/launchd/Task-Scheduler job does NOT inherit your shell's STM_DATA_DIR
+ExecStart=/usr/bin/python3 -m super_token_meter collect --data-dir %h/.super-token-meter/data
 ```
 
 and `~/.config/systemd/user/super-token-meter.timer`:
@@ -47,7 +48,7 @@ systemctl --user daemon-reload
 systemctl --user enable --now super-token-meter.timer
 ```
 
-No systemd? Use cron: `*/15 * * * * cd /path/to/super-token-meter && python3 -m super_token_meter collect`
+No systemd? Use cron: `*/15 * * * * cd /path/to/super-token-meter && python3 -m super_token_meter collect --data-dir $HOME/.super-token-meter/data`
 
 ## Windows — Task Scheduler
 
@@ -56,7 +57,8 @@ Run **`scripts/install.ps1`** in PowerShell (registers a 15-minute scheduled tas
 ```powershell
 $repo = "C:\path\to\super-token-meter"
 $py   = (Get-Command python).Source
-$action  = New-ScheduledTaskAction -Execute $py -Argument "-m super_token_meter collect" -WorkingDirectory $repo
+$data = Join-Path $HOME ".super-token-meter\data"   # pass it explicitly — the task won't inherit STM_DATA_DIR
+$action  = New-ScheduledTaskAction -Execute $py -Argument "-m super_token_meter collect --data-dir `"$data`"" -WorkingDirectory $repo
 $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 15)
 Register-ScheduledTask -TaskName "SuperTokenMeter" -Action $action -Trigger $trigger -Description "Refresh usage data"
 ```

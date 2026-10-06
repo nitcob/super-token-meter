@@ -36,7 +36,7 @@ Description=Super Token Meter collector
 [Service]
 Type=oneshot
 WorkingDirectory=$REPO
-ExecStart=$PY -m super_token_meter collect
+ExecStart=$PY -m super_token_meter collect --data-dir $DATA
 EOF
     cat > "$UD/super-token-meter.timer" <<EOF
 [Unit]
@@ -53,7 +53,7 @@ EOF
       systemctl --user enable --now super-token-meter.timer
       log "user systemd timer enabled — collects every 15 min."
     else
-      log "systemd not found — add a cron job: */15 * * * * cd $REPO && $PY -m super_token_meter collect"
+      log "systemd not found — add a cron job: */15 * * * * cd $REPO && $PY -m super_token_meter collect --data-dir $DATA"
     fi
     ;;
   *)
@@ -62,5 +62,5 @@ EOF
     ;;
 esac
 
-"$PY" -m super_token_meter collect || true
-log "Done. View the dashboard any time with:  python3 -m super_token_meter serve"
+"$PY" -m super_token_meter collect --data-dir "$DATA" || true
+log "Done. View the dashboard any time with:  python3 -m super_token_meter serve --data-dir \"$DATA\""
