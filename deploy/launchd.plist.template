@@ -12,6 +12,8 @@
     <string>-m</string>
     <string>super_token_meter</string>
     <string>collect</string>
+    <string>--data-dir</string>
+    <string>__DATA__</string>
   </array>
   <key>WorkingDirectory</key>
   <string>__REPO__</string>

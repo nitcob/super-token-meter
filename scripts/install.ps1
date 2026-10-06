@@ -16,11 +16,11 @@ Write-Host "[install] repo:   $repo"
 Write-Host "[install] python: $py"
 Write-Host "[install] data:   $data"
 
-$action  = New-ScheduledTaskAction  -Execute $py -Argument "-m super_token_meter collect" -WorkingDirectory $repo
+$action  = New-ScheduledTaskAction  -Execute $py -Argument "-m super_token_meter collect --data-dir `"$data`"" -WorkingDirectory $repo
 $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 15)
 Register-ScheduledTask -TaskName "SuperTokenMeter" -Action $action -Trigger $trigger -Force `
   -Description "Super Token Meter collector (refresh usage data every 15 min)" | Out-Null
 Write-Host "[install] scheduled task 'SuperTokenMeter' registered (every 15 min)."
 
-& $py -m super_token_meter collect
-Write-Host "[install] Done. View the dashboard any time with:  python -m super_token_meter serve"
+& $py -m super_token_meter collect --data-dir $data
+Write-Host "[install] Done. View the dashboard any time with:  python -m super_token_meter serve --data-dir `"$data`""
