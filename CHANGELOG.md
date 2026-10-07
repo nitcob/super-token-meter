@@ -5,7 +5,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
-_Nothing yet._
+### Removed
+
+- A draft comparison document that was only used for pre-release benchmarking. The roadmap tracks
+  planned features on their own merit.
 
 ## [0.1.0] - 2026-10-06
 
@@ -32,9 +35,8 @@ Initial release.
 - **CI**: cross-platform test matrix (Windows / macOS / Linux, Python 3.9 + 3.12),
   `ruff` + `mypy` lint (dev-only; runtime stays zero-dependency), `gitleaks` secrets scan, and a
   Docker build + smoke test.
-- **Docs**: README, [`docs/COMPARISON.md`](docs/COMPARISON.md) (vs `splunk/token-meter`),
-  [`ROADMAP.md`](ROADMAP.md) (features + a Stack & tooling policy), CONTRIBUTING, SECURITY, and
-  pull-request / issue templates.
+- **Docs**: README, [`ROADMAP.md`](ROADMAP.md) (features + a Stack & tooling policy), CONTRIBUTING,
+  SECURITY, and pull-request / issue templates.
 
 ### Notes
 
