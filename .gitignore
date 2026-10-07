@@ -28,3 +28,8 @@ venv/
 .env
 *token*.txt
 *secret*
+
+# coverage
+.coverage
+.coverage.*
+htmlcov/

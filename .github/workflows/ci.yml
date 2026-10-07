@@ -27,7 +27,8 @@ jobs:
       - name: Byte-compile (no syntax errors)
         run: python -m compileall -q super_token_meter scripts tests
       - name: Tests (stdlib only, no deps)
-        run: python tests/test_collector.py
+        run: |
+          for f in tests/test_*.py; do echo "== $f =="; python "$f"; done
       - name: JSON sanity (pricing + example data valid)
         run: |
           python -c "import json; json.load(open('super_token_meter/pricing.json')); print('pricing ok')"
@@ -55,6 +56,22 @@ jobs:
         run: ruff check super_token_meter tests scripts
       - name: mypy (type-check — lenient)
         run: mypy
+
+  coverage:
+    name: coverage (fail-under gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dev tools (coverage is dev-only; runtime stays zero-dep)
+        run: pip install -e ".[dev]"
+      - name: Run the suite under coverage and enforce the gate
+        run: |
+          for f in tests/test_*.py; do coverage run -p "$f"; done
+          coverage combine
+          coverage report   # fail_under is set in pyproject.toml
 
   docker:
     name: docker build + smoke

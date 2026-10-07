@@ -66,11 +66,14 @@ A principal‑level review scored v0.1 at **~72/100** — a clean, well‑CI'd f
 production‑hardened. These are the specific items to reach **~90+ ("I'd trust this in production")**,
 ordered by points‑per‑effort. Several overlap the feature milestones below.
 
-1. **Test depth → ~80% coverage (biggest win, +8–10).** Only `collector` is unit‑tested today;
-   `proxy`, `aggregate`, `server`, and CLI routing have no in‑repo tests, and the ~630‑line dashboard
-   JS (benchmark math, what‑if, period bucketing) is untested. Commit the proxy fake‑upstream harness,
-   add `test_aggregate`/`test_server`, extract the dashboard math into a testable unit, and add a
-   coverage gate in CI.
+1. **Test depth → ~80% coverage (in progress — now at 78%, +~7 so far).**
+   ✅ **Done:** committed `test_proxy` (fake‑upstream integration: Ollama + OpenAI streaming, usage
+   logging, `INJECT_USAGE`, graceful 502), `test_aggregate`, `test_server` (path‑traversal guard),
+   `test_cli`; converted the collector test in‑process; added a **coverage `fail_under` gate** in CI.
+   Backend coverage ~68% → **78%**.
+   ⬜ **Remaining:** the ~630‑line **dashboard JS** (benchmark math, what‑if, period bucketing) is
+   still untested — extract the pure math into a served module and test it (a small Node/jsdom CI
+   step, keeping the runtime dependency‑free), then raise the gate toward 80%+.
 2. **Governance + supply‑chain pack (+4).** `dependabot.yml` (pip + actions), **pin GitHub Actions to
    SHAs** (not moving tags), `release.yml` (auto GitHub Release on tag), `CODEOWNERS`, `py.typed`,
    `.editorconfig`, `CODE_OF_CONDUCT.md`.
