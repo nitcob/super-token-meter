@@ -7,17 +7,18 @@ Thanks for your interest! Super Token Meter is deliberately **small and dependen
 ```bash
 git clone https://github.com/<you>/super-token-meter.git
 cd super-token-meter
-python3 -m super_token_meter demo       # render the dashboard with sample data
-python3 tests/test_collector.py          # run tests (no pytest needed)
+python3 -m super_token_meter demo        # render the dashboard with sample data
+for f in tests/test_*.py; do python3 "$f"; done   # run the tests (no pytest needed)
 python3 scripts/make_examples.py         # regenerate synthetic sample data
 ```
 
 Lint + type‑check (dev‑only tools — they never ship in the runtime):
 
 ```bash
-pip install -e ".[dev]"                   # installs ruff + mypy (runtime stays zero‑dep)
+pip install -e ".[dev]"                   # ruff + mypy + coverage (runtime stays zero‑dep)
 ruff check super_token_meter tests scripts
 mypy
+for f in tests/test_*.py; do coverage run -p "$f"; done && coverage combine && coverage report
 ```
 
 CI runs these in a `lint` job. See **Stack & tooling** in [`ROADMAP.md`](ROADMAP.md) for what the

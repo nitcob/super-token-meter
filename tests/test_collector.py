@@ -1,21 +1,28 @@
 """Dependency-free tests for the collector. Run: python3 tests/test_collector.py (or pytest)."""
 import json
 import os
-import subprocess
 import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
-COLLECTOR = os.path.join(REPO, "super_token_meter", "collector.py")
+sys.path.insert(0, REPO)
+from super_token_meter import collector  # noqa: E402
+
 FIXTURES = os.path.join(HERE, "fixtures")
 
 
 def _collect():
+    # run in-process (not a subprocess) so coverage sees it and it's fast
     td = tempfile.mkdtemp()
     out = os.path.join(td, "o.json")
-    subprocess.run([sys.executable, COLLECTOR, "--root", FIXTURES, "--output", out,
-                    "--state", os.path.join(td, "s.json"), "--full"], check=True, cwd=REPO)
+    argv = sys.argv
+    sys.argv = ["collector", "--root", FIXTURES, "--output", out,
+                "--state", os.path.join(td, "s.json"), "--full"]
+    try:
+        collector.main()
+    finally:
+        sys.argv = argv
     return json.load(open(out))
 
 

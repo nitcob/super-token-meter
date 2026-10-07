@@ -16,7 +16,7 @@ dependencies = []  # standard library only
 [project.optional-dependencies]
 # DEV-ONLY tools. The runtime stays zero-dependency (`dependencies = []` above);
 # these are never imported at runtime and never shipped to users.
-dev = ["ruff>=0.6", "mypy>=1.8"]
+dev = ["ruff>=0.6", "mypy>=1.8", "coverage>=7"]
 
 [project.urls]
 Homepage = "https://github.com/nitcob/super-token-meter"
@@ -47,3 +47,20 @@ select = ["F", "I"]
 # actual 3.9 syntax compatibility is covered by the compileall matrix in CI.
 files = ["super_token_meter"]
 ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["super_token_meter"]
+parallel = true
+
+[tool.coverage.report]
+# Gate below the measured ~78% to leave headroom; raise it as the dashboard-JS
+# tests land (see "Hardening backlog" #1 in ROADMAP.md). __main__ is the thin CLI
+# dispatch (serve/demo/proxy bind sockets and block — those are covered by the
+# docker build+smoke job, not unit tests).
+fail_under = 74
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "except KeyboardInterrupt",
+]
