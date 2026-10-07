@@ -1,9 +1,8 @@
 # Super Token Meter — Roadmap
 
-Where this goes next. The goal is to **cover the useful parts of `splunk/token-meter`'s broader
-feature set while keeping Super Token Meter's differentiators** (grounded benchmarks, the
-cloud‑vs‑local privacy split, local‑LLM tapping, the model‑mix what‑if). The full side‑by‑side is
-in [`docs/COMPARISON.md`](docs/COMPARISON.md).
+Where this goes next. The goal is to **grow Super Token Meter's capabilities toward what people
+expect from a mature token‑usage tool, while keeping its differentiators** — grounded benchmarks,
+the cloud‑vs‑local privacy split, local‑LLM tapping, and the model‑mix what‑if.
 
 Items are ordered by **value per effort** against the current stdlib‑only architecture.
 
@@ -95,7 +94,7 @@ ordered by points‑per‑effort. Several overlap the feature milestones below.
 
 ### 1. Reasoning‑ratio metric + per‑session Run view
 
-- **Why:** closes two `splunk/token-meter` gaps (reasoning ratio, per‑session detail) with data the
+- **Why:** surfaces reasoning ratio + per‑session detail (metrics users expect) from data the
   collector already captures.
 - **What:** surface `thinking_tokens / output_tokens` as an Efficiency KPI; add a per‑session drill‑in
   (cost, tokens by type, cache hit, tokens/req, model, time span) built from `top_sessions` / `sessions`.
@@ -104,7 +103,7 @@ ordered by points‑per‑effort. Several overlap the feature milestones below.
 
 ### 2. Budgets + local alerts
 
-- **Why:** matches their monthly + per‑session budgets; high day‑to‑day value.
+- **Why:** monthly + per‑session budgets are a common ask for a cost tool; high day‑to‑day value.
 - **What:** a `budgets.json` (monthly cap + optional per‑project/per‑session caps); `collect` evaluates
   spend vs. cap and writes a status; dashboard shows a budget bar; optional local notification
   (macOS `osascript`, Linux `notify-send`, Windows toast — all stdlib/OS, no deps) at threshold %.
@@ -115,7 +114,7 @@ ordered by points‑per‑effort. Several overlap the feature milestones below.
 
 ### 3. Read‑only MCP server
 
-- **Why:** lets an agent query its own usage/budget, like theirs.
+- **Why:** lets an agent query its own usage/budget programmatically.
 - **What:** a small stdlib MCP over the JSON already emitted — tools e.g. `usage`, `sessions`,
   `budget`, `stats`. Read‑only; returns derived numbers only (no prompts/responses/paths).
 - **Effort:** medium. **Acceptance:** an MCP client can read totals, a session, and budget state;
@@ -133,7 +132,7 @@ ordered by points‑per‑effort. Several overlap the feature milestones below.
 
 ### 5. Subagents + Tools breakdown
 
-- **Why:** matches their Subagents and Tools pages.
+- **Why:** per‑subagent and per‑tool cost breakdowns, for debugging where spend actually goes.
 - **What:** parse `tool_use` / subagent signals already present in Claude Code's JSONL into two tables
   — tool calls (counts, failures, repeats) and a subagent/role hierarchy over time.
 - **Effort:** medium. **Acceptance:** both tables populate from real logs; totals reconcile with the

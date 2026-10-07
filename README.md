@@ -78,12 +78,6 @@ v0.1 — Claude Code + local LLMs, dashboard, pricing, demo. Planned: read‑onl
 
 See [`ROADMAP.md`](ROADMAP.md) for the full plan with milestones, effort, and acceptance criteria.
 
-## Prior art / credit
-
-Inspired by [`splunk/token-meter`](https://github.com/splunk/token-meter) (MIT) — a broader, multi‑agent local‑first dashboard. Super Token Meter is an independent project that leans into exact Claude cache pricing, the cloud‑vs‑local **privacy split**, grounded cited benchmarks, local‑model tapping, and the model‑mix what‑if.
-
-A detailed, feature‑by‑feature comparison is in [`docs/COMPARISON.md`](docs/COMPARISON.md).
-
 ## License
 
 [MIT](LICENSE).
